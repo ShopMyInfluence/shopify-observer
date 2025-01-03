@@ -14,7 +14,7 @@
     }
 
     // Make the fetch request with the session ID
-    fetch("https://smi--development.gadget.app/api/storeClickId", {
+    fetch("https://smi--development.gadget.app/storeClickId", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
