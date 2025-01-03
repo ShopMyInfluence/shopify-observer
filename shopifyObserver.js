@@ -2,16 +2,21 @@
   const urlParams = new URLSearchParams(window.location.search);
   const smiclickId = urlParams.get('smiclickId');
   const currentUrl = window.location.href;
+if(smiclickId){
+  localStorage.setItem('smiclickId', smiclickId);}
+  
+  // Vérifier si l'URL contient "checkout" et "thank-you"
+  if (currentUrl.includes("checkout") && currentUrl.includes("thank-you")) {
+    // Extraire le token (cartId) depuis l'URL
+    const cartId = currentUrl.split('/checkouts/')[1]?.split('/thank-you')[0];
 
-  // Vérifier si l'URL correspond au format spécifique
-  const thankYouPageRegex = /^https:\/\/shop-testpixel\.myshopify\.com\/checkouts\/cn\/([a-zA-Z0-9-:]+)/thank-you$/;
-  const match = currentUrl.match(thankYouPageRegex);
-
-  if (smiclickId && match) {
-    const cartId = match[1]; // Extraire le cartId depuis l'URL
+    if (!cartId) {
+      console.error("Cart ID (token) not found in the URL.");
+      return;
+    }
 
     // Stocker le smiclickId dans le localStorage
-    localStorage.setItem('smiclickId', smiclickId);
+    
 
     // Envoyer une requête à l'API avec le cartId
     fetch("https://smi--development.gadget.app/storeClickId", {
@@ -32,6 +37,6 @@
   } else if (!smiclickId) {
     console.error("smiclickId not found in the URL.");
   } else {
-    console.error("Current URL does not match the thank-you page format.");
+    console.error("Current URL does not match the required conditions (checkout and thank-you).");
   }
 })();
