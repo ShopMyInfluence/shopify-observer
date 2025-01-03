@@ -1,25 +1,25 @@
 (function () {
   const urlParams = new URLSearchParams(window.location.search);
   const smiclickId = urlParams.get('smiclickId');
-  
-  if (smiclickId) {
-    // Get the session ID from the cookies
-    const cookies = document.cookie.split("; ");
-    const sessionCookie = cookies.find(cookie => cookie.startsWith("_shopify_y="));
-    const sessionId = sessionCookie ? sessionCookie.split("=")[1] : null;
+  const currentUrl = window.location.href;
 
-    if (!sessionId) {
-      console.error("Session ID (_shopify_y) not found in cookies.");
-      return;
-    }
+  // Vérifier si l'URL correspond au format spécifique
+  const thankYouPageRegex = /^https:\/\/shop-testpixel\.myshopify\.com\/checkouts\/cn\/([a-zA-Z0-9-:]+)/thank-you$/;
+  const match = currentUrl.match(thankYouPageRegex);
 
-    // Make the fetch request with the session ID
+  if (smiclickId && match) {
+    const cartId = match[1]; // Extraire le cartId depuis l'URL
+
+    // Stocker le smiclickId dans le localStorage
+    localStorage.setItem('smiclickId', smiclickId);
+
+    // Envoyer une requête à l'API avec le cartId
     fetch("https://smi--development.gadget.app/storeClickId", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ smiclickId, sessionId }), // Send session ID in the body
+      body: JSON.stringify({ smiclickId, cartId }),
     })
       .then(response => {
         if (!response.ok) {
@@ -27,7 +27,11 @@
         }
         return response.json();
       })
-      .then(data => console.log("smiclickId stored:", data))
+      .then(data => console.log("smiclickId stored with cartId:", data))
       .catch(error => console.error("Error storing smiclickId:", error));
+  } else if (!smiclickId) {
+    console.error("smiclickId not found in the URL.");
+  } else {
+    console.error("Current URL does not match the thank-you page format.");
   }
 })();
