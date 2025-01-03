@@ -2,7 +2,7 @@
   const urlParams = new URLSearchParams(window.location.search);
   const smiclickId = urlParams.get('smiclickId');
   if (smiclickId) {
-    fetch("/api/storeClickId", { // Call the new route
+    fetch("https://smi--development.gadget.app/api/storeClickId", { // Call the new route
       method: "POST",
       headers: {
         "Content-Type": "application/json",
